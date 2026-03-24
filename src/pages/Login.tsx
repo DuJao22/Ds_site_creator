@@ -19,7 +19,13 @@ export default function Login() {
         body: JSON.stringify({ username, password }),
       });
       
-      const data = await res.json();
+      let data;
+      const text = await res.text();
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        throw new Error(`Erro do servidor: ${text.substring(0, 100)}...`);
+      }
       
       if (!res.ok) throw new Error(data.error || 'Erro ao fazer login');
       

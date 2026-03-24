@@ -1,5 +1,4 @@
 import express from 'express';
-import { createServer as createViteServer } from 'vite';
 import path from 'path';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
@@ -177,15 +176,17 @@ export default app;
 // --- Local Development & Production Server ---
 if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
   // Start Vite dev server
-  createViteServer({
-    server: { middlewareMode: true },
-    appType: 'spa',
-  }).then((vite) => {
-    app.use(vite.middlewares);
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log(`Server running on http://localhost:${PORT}`);
+  import('vite').then(({ createServer: createViteServer }) => {
+    createViteServer({
+      server: { middlewareMode: true },
+      appType: 'spa',
+    }).then((vite) => {
+      app.use(vite.middlewares);
+      app.listen(PORT, '0.0.0.0', () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+      });
     });
-  });
+  }).catch(err => console.error("Failed to load vite:", err));
 } else if (!process.env.VERCEL) {
   // Serve static files in production (Render, Railway, VPS, etc.)
   const distPath = path.join(process.cwd(), 'dist');
