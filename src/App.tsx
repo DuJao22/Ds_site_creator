@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import CreateSite from './pages/CreateSite';
 import SiteList from './pages/SiteList';
 import ViewSite from './pages/ViewSite';
+import Settings from './pages/Settings';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -31,6 +32,7 @@ export default function App() {
             <Route index element={<Dashboard />} />
             <Route path="create" element={<CreateSite />} />
             <Route path="sites" element={<SiteList />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>
       </BrowserRouter>

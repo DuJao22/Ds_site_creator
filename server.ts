@@ -16,10 +16,14 @@ app.use(cors());
 app.use(express.json());
 
 // Initialize default admin if not exists
-const adminExists = db.prepare('SELECT id FROM users WHERE username = ?').get('admin');
-if (!adminExists) {
-  const hash = bcrypt.hashSync('admin123', 10);
-  db.prepare('INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)').run('admin', hash, 'admin');
+try {
+  const adminExists = db.prepare('SELECT id FROM users WHERE username = ?').get('admin');
+  if (!adminExists) {
+    const hash = bcrypt.hashSync('admin123', 10);
+    db.prepare('INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)').run('admin', hash, 'admin');
+  }
+} catch (err) {
+  console.error("Failed to initialize admin user:", err);
 }
 
 // --- API Routes ---
@@ -159,6 +163,12 @@ app.post('/api/sites/:id/reactivate', authenticateToken, (req: any, res) => {
 app.delete('/api/sites/:id', authenticateToken, (req: any, res) => {
   db.prepare('DELETE FROM sites WHERE id = ?').run(req.params.id);
   res.json({ success: true });
+});
+
+// Global Error Handler to return JSON instead of HTML on Vercel
+app.use((err: any, req: any, res: any, next: any) => {
+  console.error("Global error handler:", err);
+  res.status(500).json({ error: 'Erro interno do servidor', details: err.message });
 });
 
 // --- Vercel Serverless Export ---

@@ -34,6 +34,13 @@ export default function CreateSite() {
       setError('Por favor, insira um link do Google Maps.');
       return;
     }
+
+    const apiKey = localStorage.getItem('gemini_api_key') || process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      setError('Chave da API do Gemini não configurada. Por favor, configure-a na página de Configurações.');
+      return;
+    }
+
     setIsGeneratingAI(true);
     setError('');
 
@@ -68,7 +75,7 @@ export default function CreateSite() {
         console.warn('Failed to expand URL, using original', e);
       }
 
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const ai = new GoogleGenAI({ apiKey });
       const response = await ai.models.generateContent({
         model: "gemini-3.1-pro-preview",
         contents: `Você é um especialista em marketing e criação de sites.

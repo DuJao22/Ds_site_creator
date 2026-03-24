@@ -18,6 +18,7 @@ export default function DashboardLayout() {
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
     { name: 'Criar Site', href: '/create', icon: PlusCircle },
     { name: 'Meus Sites', href: '/sites', icon: List },
+    { name: 'Configurações', href: '/settings', icon: Settings },
   ];
 
   return (
