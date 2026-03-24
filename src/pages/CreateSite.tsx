@@ -135,7 +135,12 @@ NÃO INVENTE DADOS. Se não souber ou não encontrar o local exato, retorne succ
       }
     } catch (err: any) {
       console.error(err);
-      setError(`Erro ao analisar o link com IA: ${err.message || err}. Verifique se o link é válido ou tente novamente.`);
+      const errorMessage = err.message || String(err);
+      if (errorMessage.includes('429') || errorMessage.includes('quota') || errorMessage.includes('RESOURCE_EXHAUSTED')) {
+        setError('O limite de uso gratuito da inteligência artificial foi atingido. Por favor, aguarde um minuto e tente novamente, ou preencha os dados manualmente.');
+      } else {
+        setError(`Erro ao analisar o link com IA: ${errorMessage}. Verifique se o link é válido ou tente novamente.`);
+      }
     } finally {
       setIsGeneratingAI(false);
     }
