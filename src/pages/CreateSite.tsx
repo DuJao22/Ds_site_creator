@@ -93,8 +93,7 @@ Sua missão é OBRIGATÓRIA:
 
 NÃO INVENTE DADOS. Se não souber ou não encontrar o local exato, retorne success: false.`,
         config: {
-          tools: [{ googleSearch: {} }, { urlContext: {} }],
-          toolConfig: { includeServerSideToolInvocations: true },
+          tools: [{ googleSearch: {} }],
           responseMimeType: "application/json",
           responseSchema: {
             type: Type.OBJECT,
@@ -114,7 +113,9 @@ NÃO INVENTE DADOS. Se não souber ou não encontrar o local exato, retorne succ
       });
 
       if (response.text) {
-        const data = JSON.parse(response.text);
+        // Remove markdown code blocks if present
+        const cleanText = response.text.replace(/^```json\n?/, '').replace(/\n?```$/, '').trim();
+        const data = JSON.parse(cleanText);
         
         if (!data.success) {
           setError(data.errorMessage || 'Não foi possível identificar o estabelecimento a partir deste link. Por favor, verifique o link ou preencha os dados manualmente.');
@@ -134,7 +135,7 @@ NÃO INVENTE DADOS. Se não souber ou não encontrar o local exato, retorne succ
       }
     } catch (err: any) {
       console.error(err);
-      setError('Erro ao analisar o link com IA. Verifique se o link é válido ou tente novamente.');
+      setError(`Erro ao analisar o link com IA: ${err.message || err}. Verifique se o link é válido ou tente novamente.`);
     } finally {
       setIsGeneratingAI(false);
     }
