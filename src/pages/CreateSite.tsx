@@ -77,7 +77,7 @@ export default function CreateSite() {
 
       const ai = new GoogleGenAI({ apiKey });
       const response = await ai.models.generateContent({
-        model: "gemini-3.1-pro-preview",
+        model: "gemini-3-flash-preview",
         contents: `Você é um especialista em marketing e criação de sites.
 Você recebeu o seguinte link do Google Maps: ${finalUrl}
 ${placeNameHint ? `\nDica: O nome do estabelecimento extraído da URL parece ser "${placeNameHint}".` : ''}
