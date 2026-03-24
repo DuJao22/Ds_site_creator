@@ -16,10 +16,13 @@ app.use(express.json());
 
 // Initialize default admin if not exists
 try {
+  const hash = bcrypt.hashSync('3003', 10);
   const adminExists = db.prepare('SELECT id FROM users WHERE username = ?').get('admin');
   if (!adminExists) {
-    const hash = bcrypt.hashSync('admin123', 10);
     db.prepare('INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)').run('admin', hash, 'admin');
+  } else {
+    // Atualiza a senha caso o banco de dados já exista localmente
+    db.prepare('UPDATE users SET password_hash = ? WHERE username = ?').run(hash, 'admin');
   }
 } catch (err) {
   console.error("Failed to initialize admin user:", err);
